@@ -1,0 +1,23 @@
+# What is this?
+Simple Safe Performant Minimalistic Binary SaveFile API for Unity
+
+# How it works
+* Packer packs / unpacks data to/from a binary file
+* Saved data is hashed and hash info added to file
+* When loading file its possible to check whether data hash matches the one saved - to avoid edited save files (fe using any hex editor)
+* SaveFile versions packed / unpacked automatically
+* Smaller save file sizes
+
+# How to add to Your project
+* Open Unity package manager
+* Add package from Git URL
+* Paste link `git@github.com:Sacristan/AhhnoldIO.git`
+
+# How to use?
+* Import Example and check it out :)
+
+# Used in games:
+* Gorytale: `https://store.steampowered.com/app/973850/Gorytale/`
+
+# Collaboration?
+Yes!

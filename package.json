@@ -1,0 +1,29 @@
+{
+    "name": "com.sacristan.ahhnold.io",
+    "version": "0.1.0",
+    "displayName": "Ahhnold IO",
+    "description": "Simple Safe Performant Minimalistic Binary SaveFile API for Unity",
+    "unity": "2018.1",
+    "keywords": [
+        "IO",
+        "Save",
+        "SaveFile",
+        "Performance",
+        "Safe",
+        "Binary",
+        "Small",
+        "Minimalistic"
+    ],
+    "author": {
+        "name": "Ģirts 'Sacristan' Ķesteris",
+        "email": "girts.kesteris@gmail.com",
+        "url": "https://girtskesteris.xyz"
+    },
+    "samples": [
+        {
+            "displayName": "Example",
+            "description": "Import Examples",
+            "path": "Samples~/Example"
+        }
+    ]
+}
