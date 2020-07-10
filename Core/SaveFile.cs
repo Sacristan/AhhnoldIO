@@ -34,6 +34,8 @@ namespace Sacristan.Ahhnold.IO
 
             public bool HasSaveFile => File.Exists(GetDataPath(FileNameWithExtension));
 
+            public bool ReachedEndOfSaveFileData(BinaryReader reader) => reader.BaseStream.Position >= (reader.BaseStream.Length - 64 - 1); // HASH 64 - 1 pos
+
             public void Save()
             {
                 using (FileStream stream = File.Create(GetDataPath(FileNameWithExtension)))
