@@ -231,14 +231,14 @@ namespace Sacristan.Ahhnold.IO
 
             public uint UnpackUInt(BinaryReader reader, StringBuilder packer)
             {
-                uint data = reader.ReadByte();
+                uint data = reader.ReadUInt32();
                 packer.Append(data);
                 return data;
             }
 
             public ulong UnpackULong(BinaryReader reader, StringBuilder packer)
             {
-                ulong data = reader.ReadByte();
+                ulong data = reader.ReadUInt64();
                 packer.Append(data);
                 return data;
             }
