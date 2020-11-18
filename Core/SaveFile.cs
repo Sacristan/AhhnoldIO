@@ -9,9 +9,9 @@ namespace Sacristan.Ahhnold.IO
         public abstract class Processor
         {
             public virtual Packer SaveFilePacker => null;
-            public virtual void Save() { }
-            public virtual void Load() { }
-            public virtual void Reset() { }
+            public virtual void Save() { SaveFilePacker?.Save(); }
+            public virtual void Load() { SaveFilePacker?.Load(); }
+            public virtual void Reset() { SaveFilePacker?.Delete(); }
         }
 
         #region Packers
