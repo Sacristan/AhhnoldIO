@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Collections;
+using UnityEngine;
 
 namespace Sacristan.Ahhnold.IO
 {
@@ -9,9 +11,12 @@ namespace Sacristan.Ahhnold.IO
         public abstract class Processor
         {
             public virtual Packer SaveFilePacker => null;
-            public virtual void Save() { SaveFilePacker?.Save(); }
-            public virtual void Load() { SaveFilePacker?.Load(); }
-            public virtual void Reset() { SaveFilePacker?.Delete(); }
+            public virtual void Save() => SaveFilePacker?.Save();
+            public virtual IEnumerator SaveAsync() => SaveFilePacker?.SaveAsync();
+            public virtual void Load() => SaveFilePacker?.Load();
+            public virtual IEnumerator LoadAsync() => SaveFilePacker?.LoadAsync();
+            public virtual void Reset() => Delete();
+            public virtual void Delete() => SaveFilePacker?.Delete();
         }
 
         #region Packers
@@ -50,23 +55,51 @@ namespace Sacristan.Ahhnold.IO
                 }
             }
 
+            public IEnumerator SaveAsync()
+            {
+                using (FileStream stream = File.Create(GetDataPath(FileNameWithExtension)))
+                {
+                    using (BinaryWriter writer = new BinaryWriter(stream, Encoding))
+                    {
+                        writer.Write(Version);
+
+                        string data = string.Empty;
+                        yield return PackDataAsync(writer, (string x) => data = x);
+                        writer.Write(GetHash(data));
+                    }
+                }
+            }
+
             public void Load()
             {
-                string path = GetDataPath(FileNameWithExtension);
                 if (!HasSaveFile) return;
 
                 try
                 {
-                    using (FileStream stream = File.Open(path, FileMode.Open))
+                    using (FileStream stream = File.Open(GetDataPath(FileNameWithExtension), FileMode.Open))
                     {
                         using (BinaryReader reader = new BinaryReader(stream, Encoding))
-                        {
+                        {  
                             UnpackedVersion = reader.ReadByte();
                             UnpackData(reader);
                         }
                     }
                 }
                 catch (EndOfStreamException e) { HandleCorruptedFile(e.ToString()); }
+            }
+
+            public IEnumerator LoadAsync()
+            {
+                if (!HasSaveFile) yield break;
+
+                using (FileStream stream = File.Open(GetDataPath(FileNameWithExtension), FileMode.Open))
+                {
+                    using (BinaryReader reader = new BinaryReader(stream, Encoding))
+                    {  
+                        UnpackedVersion = reader.ReadByte();
+                        yield return UnpackDataAsync(reader);
+                    }
+                }
             }
 
             public void Delete()
@@ -92,6 +125,16 @@ namespace Sacristan.Ahhnold.IO
                 throw new System.NotImplementedException();
             }
 
+            protected virtual IEnumerator PackDataAsync(BinaryWriter writer, System.Action<string> dataCallback)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            protected virtual IEnumerator UnpackDataAsync(BinaryReader reader)
+            {
+                throw new System.NotImplementedException();
+            }
+
             protected void HandleCorruptedFile(string msg = InvalidHashMessage)
             {
                 UnityEngine.Debug.LogErrorFormat("ERROR: {0} Corrupted file detected. Default values will be loaded: {1}", msg, FileNameWithExtension);
@@ -103,7 +146,6 @@ namespace Sacristan.Ahhnold.IO
                 writer.Write(data);
                 packer.Append(data);
             }
-
 
             public void Pack(BinaryWriter writer, StringBuilder packer, string data)
             {
@@ -268,6 +310,5 @@ namespace Sacristan.Ahhnold.IO
         }
 
         #endregion
-
     }
 }
