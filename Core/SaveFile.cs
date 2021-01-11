@@ -27,6 +27,7 @@ namespace Sacristan.Ahhnold.IO
             protected virtual string FileName { get; }
             protected virtual string Extension => ".dat";
             protected virtual string Salt => "17t5j010Z611KIx";
+            protected virtual System.Text.Encoding Encoding => System.Text.Encoding.ASCII;
 
             private string FileNameWithExtension => FileName + Extension;
 
@@ -40,7 +41,7 @@ namespace Sacristan.Ahhnold.IO
             {
                 using (FileStream stream = File.Create(GetDataPath(FileNameWithExtension)))
                 {
-                    using (BinaryWriter writer = new BinaryWriter(stream, System.Text.Encoding.ASCII))
+                    using (BinaryWriter writer = new BinaryWriter(stream, Encoding))
                     {
                         writer.Write(Version);
                         string data = PackData(writer);
@@ -56,10 +57,9 @@ namespace Sacristan.Ahhnold.IO
 
                 try
                 {
-
                     using (FileStream stream = File.Open(path, FileMode.Open))
                     {
-                        using (BinaryReader reader = new BinaryReader(stream, System.Text.Encoding.ASCII))
+                        using (BinaryReader reader = new BinaryReader(stream, Encoding))
                         {
                             UnpackedVersion = reader.ReadByte();
                             UnpackData(reader);
