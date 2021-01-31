@@ -207,6 +207,35 @@ namespace Sacristan.Ahhnold.IO
                 packer.Append(data);
             }
 
+            public void Pack(BinaryWriter writer, StringBuilder packer, Vector2 data)
+            {
+                Pack(writer, packer, data.x);
+                Pack(writer, packer, data.y);
+            }
+
+            public void Pack(BinaryWriter writer, StringBuilder packer, Vector3 data)
+            {
+                Pack(writer, packer, data.x);
+                Pack(writer, packer, data.y);
+                Pack(writer, packer, data.z);
+            }
+
+            public void Pack(BinaryWriter writer, StringBuilder packer, Vector4 data)
+            {
+                Pack(writer, packer, data.x);
+                Pack(writer, packer, data.y);
+                Pack(writer, packer, data.z);
+                Pack(writer, packer, data.w);
+            }
+
+            public void Pack(BinaryWriter writer, StringBuilder packer, Quaternion data)
+            {
+                Pack(writer, packer, data.x);
+                Pack(writer, packer, data.y);
+                Pack(writer, packer, data.z);
+                Pack(writer, packer, data.w);
+            }
+
             #endregion
 
             #region Unpackers
@@ -286,6 +315,44 @@ namespace Sacristan.Ahhnold.IO
                 packer.Append(data);
                 return data;
             }
+
+            public Vector2 UnpackVector2(BinaryReader reader, StringBuilder packer)
+            {
+                float x = UnpackFloat(reader, packer);
+                float y = UnpackFloat(reader, packer);
+
+                return new Vector2(x, y);
+            }
+
+            public Vector3 UnpackVector3(BinaryReader reader, StringBuilder packer)
+            {
+                float x = UnpackFloat(reader, packer);
+                float y = UnpackFloat(reader, packer);
+                float z = UnpackFloat(reader, packer);
+
+                return new Vector3(x, y, z);
+            }
+
+            public Vector4 UnpackVector4(BinaryReader reader, StringBuilder packer)
+            {
+                float x = UnpackFloat(reader, packer);
+                float y = UnpackFloat(reader, packer);
+                float z = UnpackFloat(reader, packer);
+                float w = UnpackFloat(reader, packer);
+
+                return new Vector4(x, y, z, w);
+            }
+
+            public Quaternion UnpackQuaternion(BinaryReader reader, StringBuilder packer)
+            {
+                float x = UnpackFloat(reader, packer);
+                float y = UnpackFloat(reader, packer);
+                float z = UnpackFloat(reader, packer);
+                float w = UnpackFloat(reader, packer);
+
+                return new Quaternion(x, y, z, w);
+            }
+
             protected string GetHash(string data)
             {
                 return Sha256Sum(data + "(╯°□°）╯︵ ┻━┻" + Salt);
