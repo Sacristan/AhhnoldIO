@@ -33,14 +33,20 @@ namespace Sacristan.Ahhnold.IO
             protected virtual string Extension => ".dat";
             protected virtual string Salt => "17t5j010Z611KIx";
             protected virtual System.Text.Encoding Encoding => System.Text.Encoding.ASCII;
-
             private string FileNameWithExtension => FileName + Extension;
-
             protected byte UnpackedVersion { get; private set; } = 0;
+            private readonly StringBuilder packer;
+            private readonly StringBuilder unpacker;
 
             public bool HasSaveFile => File.Exists(GetDataPath(FileNameWithExtension));
 
             public bool ReachedEndOfSaveFileData(BinaryReader reader) => reader.BaseStream.Position >= (reader.BaseStream.Length - 64 - 1); // HASH 64 - 1 pos
+
+            public Packer()
+            {
+                packer = new StringBuilder();
+                unpacker = new StringBuilder();
+            }
 
             public void Save()
             {
@@ -49,8 +55,9 @@ namespace Sacristan.Ahhnold.IO
                     using (BinaryWriter writer = new BinaryWriter(stream, Encoding))
                     {
                         writer.Write(Version);
-                        string data = PackData(writer);
-                        writer.Write(GetHash(data));
+                        PackData(writer);
+                        writer.Write(GetHash(packer.ToString()));
+                        packer.Clear();
                     }
                 }
             }
@@ -64,8 +71,8 @@ namespace Sacristan.Ahhnold.IO
                         writer.Write(Version);
 
                         string data = string.Empty;
-                        yield return PackDataAsync(writer, (string x) => data = x);
-                        writer.Write(GetHash(data));
+                        yield return PackDataAsync(writer);
+                        writer.Write(GetHash(unpacker.ToString()));
                     }
                 }
             }
@@ -79,13 +86,15 @@ namespace Sacristan.Ahhnold.IO
                     using (FileStream stream = File.Open(GetDataPath(FileNameWithExtension), FileMode.Open))
                     {
                         using (BinaryReader reader = new BinaryReader(stream, Encoding))
-                        {  
+                        {
                             UnpackedVersion = reader.ReadByte();
                             UnpackData(reader);
                         }
                     }
                 }
                 catch (EndOfStreamException e) { HandleCorruptedFile(e.ToString()); }
+
+                unpacker.Clear();
             }
 
             public IEnumerator LoadAsync()
@@ -95,7 +104,7 @@ namespace Sacristan.Ahhnold.IO
                 using (FileStream stream = File.Open(GetDataPath(FileNameWithExtension), FileMode.Open))
                 {
                     using (BinaryReader reader = new BinaryReader(stream, Encoding))
-                    {  
+                    {
                         UnpackedVersion = reader.ReadByte();
                         yield return UnpackDataAsync(reader);
                     }
@@ -108,14 +117,14 @@ namespace Sacristan.Ahhnold.IO
                 if (HasSaveFile) File.Delete(path);
             }
 
-            protected bool ValidateHash(BinaryReader reader, string data)
+            protected bool ValidateHash(BinaryReader reader)
             {
                 string fileHash = reader.ReadString();
-                string decodedHash = GetHash(data);
+                string decodedHash = GetHash(unpacker.ToString());
                 return fileHash.Equals(decodedHash);
             }
 
-            protected virtual string PackData(BinaryWriter writer)
+            protected virtual void PackData(BinaryWriter writer)
             {
                 throw new System.NotImplementedException();
             }
@@ -125,7 +134,7 @@ namespace Sacristan.Ahhnold.IO
                 throw new System.NotImplementedException();
             }
 
-            protected virtual IEnumerator PackDataAsync(BinaryWriter writer, System.Action<string> dataCallback)
+            protected virtual IEnumerator PackDataAsync(BinaryWriter writer)
             {
                 throw new System.NotImplementedException();
             }
@@ -141,214 +150,214 @@ namespace Sacristan.Ahhnold.IO
             }
 
             #region Packers
-            public void Pack(BinaryWriter writer, StringBuilder packer, bool data)
+            public void Pack(BinaryWriter writer, bool data)
             {
                 writer.Write(data);
-                packer.Append(data);
+                this.packer.Append(data);
             }
 
-            public void Pack(BinaryWriter writer, StringBuilder packer, string data)
+            public void Pack(BinaryWriter writer, string data)
             {
                 writer.Write(data);
-                packer.Append(data);
+                this.packer.Append(data);
             }
 
-            public void Pack(BinaryWriter writer, StringBuilder packer, float data)
+            public void Pack(BinaryWriter writer, float data)
             {
                 writer.Write(data);
-                packer.Append(data);
+                this.packer.Append(data);
             }
 
-            public void Pack(BinaryWriter writer, StringBuilder packer, short data)
+            public void Pack(BinaryWriter writer, short data)
             {
                 writer.Write(data);
-                packer.Append(data);
+                this.packer.Append(data);
             }
 
-            public void Pack(BinaryWriter writer, StringBuilder packer, int data)
+            public void Pack(BinaryWriter writer, int data)
             {
                 writer.Write(data);
-                packer.Append(data);
+                this.packer.Append(data);
             }
 
-            public void Pack(BinaryWriter writer, StringBuilder packer, long data)
+            public void Pack(BinaryWriter writer, long data)
             {
                 writer.Write(data);
-                packer.Append(data);
+                this.packer.Append(data);
             }
 
-            public void Pack(BinaryWriter writer, StringBuilder packer, sbyte data)
+            public void Pack(BinaryWriter writer, sbyte data)
             {
                 writer.Write(data);
-                packer.Append(data);
+                this.packer.Append(data);
             }
 
-            public void Pack(BinaryWriter writer, StringBuilder packer, byte data)
+            public void Pack(BinaryWriter writer, byte data)
             {
                 writer.Write(data);
-                packer.Append(data);
+                this.packer.Append(data);
             }
 
-            public void Pack(BinaryWriter writer, StringBuilder packer, ushort data)
+            public void Pack(BinaryWriter writer, ushort data)
             {
                 writer.Write(data);
-                packer.Append(data);
+                this.packer.Append(data);
             }
 
-            public void Pack(BinaryWriter writer, StringBuilder packer, uint data)
+            public void Pack(BinaryWriter writer, uint data)
             {
                 writer.Write(data);
-                packer.Append(data);
+                this.packer.Append(data);
             }
 
-            public void Pack(BinaryWriter writer, StringBuilder packer, ulong data)
+            public void Pack(BinaryWriter writer, ulong data)
             {
                 writer.Write(data);
-                packer.Append(data);
+                this.packer.Append(data);
             }
 
-            public void Pack(BinaryWriter writer, StringBuilder packer, Vector2 data)
+            public void Pack(BinaryWriter writer, Vector2 data)
             {
-                Pack(writer, packer, data.x);
-                Pack(writer, packer, data.y);
+                Pack(writer, data.x);
+                Pack(writer, data.y);
             }
 
-            public void Pack(BinaryWriter writer, StringBuilder packer, Vector3 data)
+            public void Pack(BinaryWriter writer, Vector3 data)
             {
-                Pack(writer, packer, data.x);
-                Pack(writer, packer, data.y);
-                Pack(writer, packer, data.z);
+                Pack(writer, data.x);
+                Pack(writer, data.y);
+                Pack(writer, data.z);
             }
 
-            public void Pack(BinaryWriter writer, StringBuilder packer, Vector4 data)
+            public void Pack(BinaryWriter writer, Vector4 data)
             {
-                Pack(writer, packer, data.x);
-                Pack(writer, packer, data.y);
-                Pack(writer, packer, data.z);
-                Pack(writer, packer, data.w);
+                Pack(writer, data.x);
+                Pack(writer, data.y);
+                Pack(writer, data.z);
+                Pack(writer, data.w);
             }
 
-            public void Pack(BinaryWriter writer, StringBuilder packer, Quaternion data)
+            public void Pack(BinaryWriter writer, Quaternion data)
             {
-                Pack(writer, packer, data.x);
-                Pack(writer, packer, data.y);
-                Pack(writer, packer, data.z);
-                Pack(writer, packer, data.w);
+                Pack(writer, data.x);
+                Pack(writer, data.y);
+                Pack(writer, data.z);
+                Pack(writer, data.w);
             }
 
             #endregion
 
             #region Unpackers
-            public bool UnpackBool(BinaryReader reader, StringBuilder packer)
+            public bool UnpackBool(BinaryReader reader)
             {
                 bool data = reader.ReadBoolean();
-                packer.Append(data);
+                this.unpacker.Append(data);
                 return data;
             }
 
-            public string UnpackString(BinaryReader reader, StringBuilder packer)
+            public string UnpackString(BinaryReader reader)
             {
                 string data = reader.ReadString();
-                packer.Append(data);
+                this.unpacker.Append(data);
                 return data;
             }
 
-            public float UnpackFloat(BinaryReader reader, StringBuilder packer)
+            public float UnpackFloat(BinaryReader reader)
             {
                 float data = reader.ReadSingle();
-                packer.Append(data);
+                this.unpacker.Append(data);
                 return data;
             }
 
-            public short UnpackShort(BinaryReader reader, StringBuilder packer)
+            public short UnpackShort(BinaryReader reader)
             {
                 short data = reader.ReadInt16();
-                packer.Append(data);
+                this.unpacker.Append(data);
                 return data;
             }
 
-            public int UnpackInt(BinaryReader reader, StringBuilder packer)
+            public int UnpackInt(BinaryReader reader)
             {
                 int data = reader.ReadInt32();
-                packer.Append(data);
+                this.unpacker.Append(data);
                 return data;
             }
 
-            public long UnpackLong(BinaryReader reader, StringBuilder packer)
+            public long UnpackLong(BinaryReader reader)
             {
                 long data = reader.ReadInt64();
-                packer.Append(data);
+                this.unpacker.Append(data);
                 return data;
             }
 
-            public sbyte UnpackSByte(BinaryReader reader, StringBuilder packer)
+            public sbyte UnpackSByte(BinaryReader reader)
             {
                 sbyte data = reader.ReadSByte();
-                packer.Append(data);
+                this.unpacker.Append(data);
                 return data;
             }
 
-            public byte UnpackByte(BinaryReader reader, StringBuilder packer)
+            public byte UnpackByte(BinaryReader reader)
             {
                 byte data = reader.ReadByte();
-                packer.Append(data);
+                this.unpacker.Append(data);
                 return data;
             }
 
-            public ushort UnpackUShort(BinaryReader reader, StringBuilder packer)
+            public ushort UnpackUShort(BinaryReader reader)
             {
                 ushort data = reader.ReadUInt16();
-                packer.Append(data);
+                this.unpacker.Append(data);
                 return data;
             }
 
-            public uint UnpackUInt(BinaryReader reader, StringBuilder packer)
+            public uint UnpackUInt(BinaryReader reader)
             {
                 uint data = reader.ReadUInt32();
-                packer.Append(data);
+                this.unpacker.Append(data);
                 return data;
             }
 
-            public ulong UnpackULong(BinaryReader reader, StringBuilder packer)
+            public ulong UnpackULong(BinaryReader reader)
             {
                 ulong data = reader.ReadUInt64();
-                packer.Append(data);
+                this.unpacker.Append(data);
                 return data;
             }
 
-            public Vector2 UnpackVector2(BinaryReader reader, StringBuilder packer)
+            public Vector2 UnpackVector2(BinaryReader reader)
             {
-                float x = UnpackFloat(reader, packer);
-                float y = UnpackFloat(reader, packer);
+                float x = UnpackFloat(reader);
+                float y = UnpackFloat(reader);
 
                 return new Vector2(x, y);
             }
 
-            public Vector3 UnpackVector3(BinaryReader reader, StringBuilder packer)
+            public Vector3 UnpackVector3(BinaryReader reader)
             {
-                float x = UnpackFloat(reader, packer);
-                float y = UnpackFloat(reader, packer);
-                float z = UnpackFloat(reader, packer);
+                float x = UnpackFloat(reader);
+                float y = UnpackFloat(reader);
+                float z = UnpackFloat(reader);
 
                 return new Vector3(x, y, z);
             }
 
-            public Vector4 UnpackVector4(BinaryReader reader, StringBuilder packer)
+            public Vector4 UnpackVector4(BinaryReader reader)
             {
-                float x = UnpackFloat(reader, packer);
-                float y = UnpackFloat(reader, packer);
-                float z = UnpackFloat(reader, packer);
-                float w = UnpackFloat(reader, packer);
+                float x = UnpackFloat(reader);
+                float y = UnpackFloat(reader);
+                float z = UnpackFloat(reader);
+                float w = UnpackFloat(reader);
 
                 return new Vector4(x, y, z, w);
             }
 
-            public Quaternion UnpackQuaternion(BinaryReader reader, StringBuilder packer)
+            public Quaternion UnpackQuaternion(BinaryReader reader)
             {
-                float x = UnpackFloat(reader, packer);
-                float y = UnpackFloat(reader, packer);
-                float z = UnpackFloat(reader, packer);
-                float w = UnpackFloat(reader, packer);
+                float x = UnpackFloat(reader);
+                float y = UnpackFloat(reader);
+                float z = UnpackFloat(reader);
+                float w = UnpackFloat(reader);
 
                 return new Quaternion(x, y, z, w);
             }
