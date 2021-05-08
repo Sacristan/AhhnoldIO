@@ -73,6 +73,8 @@ namespace Sacristan.Ahhnold.IO
                         string data = string.Empty;
                         yield return PackDataAsync(writer);
                         writer.Write(GetHash(unpacker.ToString()));
+
+                        packer.Clear();
                     }
                 }
             }
@@ -109,6 +111,8 @@ namespace Sacristan.Ahhnold.IO
                         yield return UnpackDataAsync(reader);
                     }
                 }
+
+                unpacker.Clear();
             }
 
             public void Delete()

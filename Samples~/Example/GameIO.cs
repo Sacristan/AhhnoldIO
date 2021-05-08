@@ -14,32 +14,19 @@ namespace Sacristan.Ahhnold.IO.Example
             protected override string FileName => "cube";
             protected override string Extension => ".sav";
 
-            protected override string PackData(BinaryWriter writer)
+            protected override void PackData(BinaryWriter writer)
             {
-                StringBuilder str = new StringBuilder();
-
-                Vector3 pos = SaveGameProcessor.saveFilePosition;
-
-                Pack(writer, str, pos.x);
-                Pack(writer, str, pos.y);
-                Pack(writer, str, pos.z);
-
-                return str.ToString();
+                Vector3 pos = SaveGameProcessor.cube.transform.position;
+                Pack(writer, pos);
             }
 
             protected override void UnpackData(BinaryReader reader)
             {
-                StringBuilder str = new StringBuilder();
+                Vector3 pos = UnpackVector3(reader);
 
-                Vector3 pos = new Vector3(
-                    UnpackFloat(reader, str), //UNPACK X
-                    UnpackFloat(reader, str), //UNPACK Y 
-                    UnpackFloat(reader, str) //UNPACK Z
-                );
-
-                if (ValidateHash(reader, str.ToString())) //VALIDATES WHETHER LOADED DATA MATCHES SAVED DATA HASH 
+                if (ValidateHash(reader)) //VALIDATES WHETHER LOADED DATA MATCHES SAVED DATA HASH 
                 {
-                    SaveGameProcessor.saveFilePosition = pos;
+                    SaveGameProcessor.cube.transform.position = pos;
                 }
                 else HandleCorruptedFile();
             }
@@ -50,7 +37,7 @@ namespace Sacristan.Ahhnold.IO.Example
         {
             Packer _packer;
 
-            public Vector3 saveFilePosition;
+            public Transform cube;
 
             public override SaveFile.Packer SaveFilePacker
             {
@@ -60,22 +47,6 @@ namespace Sacristan.Ahhnold.IO.Example
                     return _packer;
                 }
             }
-
-            public override void Save()
-            {
-                SaveFilePacker.Save();
-            }
-
-            public override void Load()
-            {
-                SaveFilePacker.Load();
-            }
-
-            public override void Reset()
-            {
-                SaveFilePacker.Delete();
-            }
-
         }
 
         public static Processor SaveGameProcessor = new Processor();
