@@ -11,7 +11,7 @@ Simple Safe Performant Minimalistic Binary SaveFile API for Unity
 # How to add to Your project
 * Open Unity package manager
 * Add package from Git URL
-* Paste link `git@github.com:Sacristan/AhhnoldIO.git`
+* Paste link `https://github.com/Sacristan/AhhnoldIO.git`
 
 # How to use?
 * Import Example and check it out :)
