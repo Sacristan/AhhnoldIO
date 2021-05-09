@@ -4,11 +4,11 @@ using System.Text;
 using System.Collections;
 using UnityEngine;
 
-namespace Sacristan.Ahhnold.IO
+namespace Sacristan.Ahhnold.IO.Binary
 {
     public static partial class SaveFile
     {
-        public abstract class PackerBinary : Packer, IPacker
+        public abstract class Packer : IO.SaveFile.Packer
         {
             protected virtual byte Version { get; }
             protected byte UnpackedVersion { get; private set; } = 0;
@@ -17,7 +17,7 @@ namespace Sacristan.Ahhnold.IO
             protected readonly StringBuilder packer;
             protected readonly StringBuilder unpacker;
 
-            public PackerBinary() : base()
+            public Packer() : base()
             {
                 packer = new StringBuilder();
                 unpacker = new StringBuilder();
@@ -25,7 +25,7 @@ namespace Sacristan.Ahhnold.IO
 
             public virtual void Save()
             {
-                using (FileStream stream = File.Create(GetDataPath(FileNameWithExtension)))
+                using (FileStream stream = File.Create(SaveFilePath))
                 {
                     using (BinaryWriter writer = new BinaryWriter(stream, Encoding))
                     {
@@ -39,7 +39,7 @@ namespace Sacristan.Ahhnold.IO
 
             public virtual IEnumerator SaveAsync()
             {
-                using (FileStream stream = File.Create(GetDataPath(FileNameWithExtension)))
+                using (FileStream stream = File.Create(SaveFilePath))
                 {
                     using (BinaryWriter writer = new BinaryWriter(stream, Encoding))
                     {
@@ -60,7 +60,7 @@ namespace Sacristan.Ahhnold.IO
 
                 try
                 {
-                    using (FileStream stream = File.Open(GetDataPath(FileNameWithExtension), FileMode.Open))
+                    using (FileStream stream = File.Open(SaveFilePath, FileMode.Open))
                     {
                         using (BinaryReader reader = new BinaryReader(stream, Encoding))
                         {
@@ -78,7 +78,7 @@ namespace Sacristan.Ahhnold.IO
             {
                 if (!HasSaveFile) yield break;
 
-                using (FileStream stream = File.Open(GetDataPath(FileNameWithExtension), FileMode.Open))
+                using (FileStream stream = File.Open(SaveFilePath, FileMode.Open))
                 {
                     using (BinaryReader reader = new BinaryReader(stream, Encoding))
                     {

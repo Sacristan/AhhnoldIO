@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Sacristan.Ahhnold.IO
+namespace Sacristan.Ahhnold.IO.Binary
 {
     public static partial class SaveFile
     {
@@ -15,5 +15,18 @@ namespace Sacristan.Ahhnold.IO
             public virtual void Delete() => SaveFilePacker?.Delete();
         }
 
+    }
+}
+
+namespace Sacristan.Ahhnold.IO.Serialized
+{
+    public static partial class SaveFile
+    {
+        public abstract class Processor
+        {
+            public virtual Packer SaveFilePacker => null;
+            public void Save(object data) => SaveFilePacker?.Save(data);
+            public void Load<T>(ref object data) => SaveFilePacker?.Load<T>(ref data);
+        }
     }
 }

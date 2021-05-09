@@ -6,15 +6,7 @@ namespace Sacristan.Ahhnold.IO
 {
     public static partial class SaveFile
     {
-        public interface IPacker
-        {
-            void Save();
-            IEnumerator SaveAsync();
-            void Load();
-            IEnumerator LoadAsync();
-        }
-
-        public abstract class Packer : IPacker //TEMP
+        public abstract class Packer
         {
             protected const string InvalidHashMessage = "InvalidHash";
             protected virtual string FileName { get; }
