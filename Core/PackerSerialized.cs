@@ -33,15 +33,14 @@ namespace Sacristan.Ahhnold.IO.Serialized
                 }
             }
 
-            public virtual void Load<T>(ref object data)
+            public virtual T Load<T>()
             {
-                if (!HasSaveFile) return;
+                if (!HasSaveFile) return default(T);
 
                 switch (SaveFileSerializationType)
                 {
                     case SerializationType.JSON:
-                        DeserializeJSON<T>(ref data);
-                        break;
+                        return DeserializeJSON<T>();
                     default:
                         throw new System.NotImplementedException();
                 }
@@ -73,10 +72,10 @@ namespace Sacristan.Ahhnold.IO.Serialized
                 BuildHashFile(json);
             }
 
-            private void DeserializeJSON<T>(ref object data)
+            private T DeserializeJSON<T>()
             {
                 string json = System.IO.File.ReadAllText(SaveFilePath);
-                data = JsonUtility.FromJson<T>(json);
+                return JsonUtility.FromJson<T>(json);
             }
 
             private void BuildHashFile(string data)

@@ -26,7 +26,7 @@ namespace Sacristan.Ahhnold.IO.Serialized
         {
             public virtual Packer SaveFilePacker => null;
             public void Save(object data) => SaveFilePacker?.Save(data);
-            public void Load<T>(ref object data) => SaveFilePacker?.Load<T>(ref data);
+            public T Load<T>() => SaveFilePacker.Load<T>();
         }
     }
 }
