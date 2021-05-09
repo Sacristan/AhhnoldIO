@@ -8,13 +8,22 @@ namespace Sacristan.Ahhnold.IO
 {
     public static partial class SaveFile
     {
-        public abstract class PackerBinary : Packer
+        public abstract class PackerBinary : Packer, IPacker
         {
             protected virtual byte Version { get; }
             protected byte UnpackedVersion { get; private set; } = 0;
             protected virtual System.Text.Encoding Encoding => System.Text.Encoding.ASCII;
+            public bool ReachedEndOfSaveFileData(BinaryReader reader) => reader.BaseStream.Position >= (reader.BaseStream.Length - 64 - 1); // HASH 64 - 1 pos
+            protected readonly StringBuilder packer;
+            protected readonly StringBuilder unpacker;
 
-            public override void Save()
+            public PackerBinary() : base()
+            {
+                packer = new StringBuilder();
+                unpacker = new StringBuilder();
+            }
+
+            public virtual void Save()
             {
                 using (FileStream stream = File.Create(GetDataPath(FileNameWithExtension)))
                 {
@@ -28,7 +37,7 @@ namespace Sacristan.Ahhnold.IO
                 }
             }
 
-            public override IEnumerator SaveAsync()
+            public virtual IEnumerator SaveAsync()
             {
                 using (FileStream stream = File.Create(GetDataPath(FileNameWithExtension)))
                 {
@@ -45,7 +54,7 @@ namespace Sacristan.Ahhnold.IO
                 }
             }
 
-            public override void Load()
+            public virtual void Load()
             {
                 if (!HasSaveFile) return;
 
@@ -65,7 +74,7 @@ namespace Sacristan.Ahhnold.IO
                 unpacker.Clear();
             }
 
-            public override IEnumerator LoadAsync()
+            public virtual IEnumerator LoadAsync()
             {
                 if (!HasSaveFile) yield break;
 

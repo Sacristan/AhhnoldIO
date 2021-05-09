@@ -6,30 +6,45 @@ namespace Sacristan.Ahhnold.IO
 {
     public static partial class SaveFile
     {
-        public abstract class Packer
+        public interface IPacker
+        {
+            void Save();
+            IEnumerator SaveAsync();
+            void Load();
+            IEnumerator LoadAsync();
+        }
+
+        public abstract class Packer : IPacker //TEMP
         {
             protected const string InvalidHashMessage = "InvalidHash";
             protected virtual string FileName { get; }
             protected virtual string Extension => ".dat";
             protected virtual string Salt => "17t5j010Z611KIx";
             protected string FileNameWithExtension => FileName + Extension;
-            protected readonly StringBuilder packer;
-            protected readonly StringBuilder unpacker;
-
             public bool HasSaveFile => File.Exists(GetDataPath(FileNameWithExtension));
+            public string SaveFilePath => GetDataPath(FileNameWithExtension);
 
-            public bool ReachedEndOfSaveFileData(BinaryReader reader) => reader.BaseStream.Position >= (reader.BaseStream.Length - 64 - 1); // HASH 64 - 1 pos
-
-            public Packer()
+            #region  REMOVE
+            public void Save()
             {
-                packer = new StringBuilder();
-                unpacker = new StringBuilder();
+                throw new System.NotImplementedException();
             }
 
-            public virtual void Save() { }
-            public virtual IEnumerator SaveAsync() { yield return null; }
-            public virtual void Load() { }
-            public virtual IEnumerator LoadAsync() { yield return null; }
+            public IEnumerator SaveAsync()
+            {
+                throw new System.NotImplementedException();
+            }
+
+            public void Load()
+            {
+                throw new System.NotImplementedException();
+            }
+
+            public IEnumerator LoadAsync()
+            {
+                throw new System.NotImplementedException();
+            }
+            #endregion
 
             public void Delete()
             {
@@ -56,6 +71,8 @@ namespace Sacristan.Ahhnold.IO
 
                 return hash.ToString().ToLower();
             }
+
+
         }
 
     }
