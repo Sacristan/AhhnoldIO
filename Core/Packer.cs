@@ -57,6 +57,11 @@ namespace Sacristan.Ahhnold.IO
                 return Sha256Sum(data + "(╯°□°）╯︵ ┻━┻" + Salt);
             }
 
+            protected bool IsValidHash(string data, string hash)
+            {
+                return GetHash(data).Equals(hash);
+            }
+
             private static string Sha256Sum(string str)
             {
                 System.Security.Cryptography.SHA256Managed crypt = new System.Security.Cryptography.SHA256Managed();

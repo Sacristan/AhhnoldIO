@@ -94,7 +94,7 @@ namespace Sacristan.Ahhnold.IO
             {
                 string fileHash = reader.ReadString();
                 string decodedHash = GetHash(unpacker.ToString());
-                return fileHash.Equals(decodedHash);
+                return IsValidHash(data: unpacker.ToString(), hash: fileHash);
             }
 
             protected virtual void PackData(BinaryWriter writer)
