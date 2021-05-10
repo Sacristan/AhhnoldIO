@@ -1,14 +1,13 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
 namespace Sacristan.Ahhnold.IO.Serialized
 {
     public static partial class SaveFile
     {
-        public abstract class Packer : IO.SaveFile.Packer
+        public abstract class Packer : IO.SaveFile.PackerBase
         {
             const string HashFileExtension = ".hsh";
 
@@ -47,7 +46,7 @@ namespace Sacristan.Ahhnold.IO.Serialized
 
             }
 
-            protected bool ValidateHash()
+            public bool IsHashValid()
             {
                 if (!HasHashFile) return false;
                 string data;
@@ -62,7 +61,7 @@ namespace Sacristan.Ahhnold.IO.Serialized
                 }
 
                 string hash = File.ReadAllText(HashFilePath);
-                return IsValidHash(data: data, hash: hash);
+                return IsHashValid(data: data, hash: hash);
             }
 
             private void SerializeJSON(object data)

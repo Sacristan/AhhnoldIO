@@ -8,7 +8,7 @@ namespace Sacristan.Ahhnold.IO.Binary
 {
     public static partial class SaveFile
     {
-        public abstract class Packer : IO.SaveFile.Packer
+        public abstract class Packer : IO.SaveFile.PackerBase
         {
             protected virtual byte Version { get; }
             protected byte UnpackedVersion { get; private set; } = 0;
@@ -94,7 +94,7 @@ namespace Sacristan.Ahhnold.IO.Binary
             {
                 string fileHash = reader.ReadString();
                 string decodedHash = GetHash(unpacker.ToString());
-                return IsValidHash(data: unpacker.ToString(), hash: fileHash);
+                return IsHashValid(data: unpacker.ToString(), hash: fileHash);
             }
 
             protected virtual void PackData(BinaryWriter writer)

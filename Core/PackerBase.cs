@@ -6,7 +6,7 @@ namespace Sacristan.Ahhnold.IO
 {
     public static partial class SaveFile
     {
-        public abstract class Packer
+        public abstract class PackerBase
         {
             protected const string InvalidHashMessage = "InvalidHash";
             protected virtual string FileName { get; }
@@ -15,28 +15,6 @@ namespace Sacristan.Ahhnold.IO
             protected string FileNameWithExtension => FileName + Extension;
             public bool HasSaveFile => File.Exists(GetDataPath(FileNameWithExtension));
             public string SaveFilePath => GetDataPath(FileNameWithExtension);
-
-            #region  REMOVE
-            public void Save()
-            {
-                throw new System.NotImplementedException();
-            }
-
-            public IEnumerator SaveAsync()
-            {
-                throw new System.NotImplementedException();
-            }
-
-            public void Load()
-            {
-                throw new System.NotImplementedException();
-            }
-
-            public IEnumerator LoadAsync()
-            {
-                throw new System.NotImplementedException();
-            }
-            #endregion
 
             public void Delete()
             {
@@ -49,7 +27,7 @@ namespace Sacristan.Ahhnold.IO
                 return Sha256Sum(data + "(╯°□°）╯︵ ┻━┻" + Salt);
             }
 
-            protected bool IsValidHash(string data, string hash)
+            protected bool IsHashValid(string data, string hash)
             {
                 return GetHash(data).Equals(hash);
             }

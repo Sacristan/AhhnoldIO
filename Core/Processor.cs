@@ -27,6 +27,7 @@ namespace Sacristan.Ahhnold.IO.Serialized
             public virtual Packer SaveFilePacker => null;
             public void Save(object data) => SaveFilePacker?.Save(data);
             public T Load<T>() => SaveFilePacker.Load<T>();
+            public bool IsHashValid() => SaveFilePacker.IsHashValid();
         }
     }
 }
