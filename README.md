@@ -1,5 +1,5 @@
 # What is this?
-Simple Safe Performant Minimalistic Binary SaveFile API for Unity
+Simple Safe Performant Minimalistic SaveFile API for Unity
 
 # How it works
 * Packer packs / unpacks data to/from a binary file
@@ -12,6 +12,10 @@ Simple Safe Performant Minimalistic Binary SaveFile API for Unity
 * Open Unity package manager
 * Add package from Git URL
 * Paste link `https://github.com/Sacristan/AhhnoldIO.git`
+
+# What save types are supported:
+* Binary file via Binary Writer / Reader
+* JSON Serialization
 
 # How to use?
 * Import Example and check it out :)
