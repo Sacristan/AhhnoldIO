@@ -1,13 +1,11 @@
-﻿using UnityEngine;
-using System.IO;
-using Sacristan.Ahhnold.IO;
-using System.Text;
+﻿using System.IO;
+using UnityEngine;
 
-namespace Sacristan.Ahhnold.IO.Example
+namespace Sacristan.Ahhnold.IO.Example.Binary
 {
-    public static class GameIO
+    public static class BinaryFile
     {
-        private class Packer : SaveFile.Packer
+        private class Packer : Sacristan.Ahhnold.IO.Binary.SaveFile.Packer
         {
             protected override byte Version => 1;
             protected override string Salt => "Y7fA7nEjt0Jl30M";
@@ -32,14 +30,12 @@ namespace Sacristan.Ahhnold.IO.Example
             }
         }
 
-
-        public class Processor : SaveFile.Processor
+        public class Processor : Sacristan.Ahhnold.IO.Binary.SaveFile.Processor
         {
             Packer _packer;
-
             public Transform cube;
 
-            public override SaveFile.Packer SaveFilePacker
+            public override Sacristan.Ahhnold.IO.Binary.SaveFile.Packer SaveFilePacker
             {
                 get
                 {

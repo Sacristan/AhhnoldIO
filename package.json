@@ -1,8 +1,8 @@
 {
     "name": "com.sacristan.ahhnold.io",
-    "version": "0.1.7",
+    "version": "0.2.0",
     "displayName": "Ahhnold IO",
-    "description": "Simple Safe Performant Minimalistic Binary SaveFile API for Unity",
+    "description": "Simple Safe Performant Minimalistic SaveFile API for Unity",
     "unity": "2018.1",
     "keywords": [
         "IO",
@@ -11,6 +11,7 @@
         "Performance",
         "Safe",
         "Binary",
+        "JSON",
         "Small",
         "Minimalistic"
     ],
