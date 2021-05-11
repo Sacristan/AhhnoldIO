@@ -22,6 +22,7 @@ Simple Safe Performant Minimalistic SaveFile API for Unity
 
 # Used in games:
 * Gorytale: `https://store.steampowered.com/app/973850/Gorytale/`
+* MineClone: `https://www.crazygames.com/game/mine-clone`
 
 # Collaboration?
 Yes!
