@@ -46,6 +46,12 @@ namespace Sacristan.Ahhnold.IO.Serialized
 
             }
 
+            public override void Delete()
+            {
+                base.Delete();
+                if (HasHashFile) File.Delete(HashFilePath);
+            }
+
             public bool IsHashValid()
             {
                 if (!HasHashFile) return false;

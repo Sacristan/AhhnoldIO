@@ -16,7 +16,7 @@ namespace Sacristan.Ahhnold.IO
             public bool HasSaveFile => File.Exists(GetDataPath(FileNameWithExtension));
             public string SaveFilePath => GetDataPath(FileNameWithExtension);
 
-            public void Delete()
+            public virtual void Delete()
             {
                 string path = GetDataPath(FileNameWithExtension);
                 if (HasSaveFile) File.Delete(path);
