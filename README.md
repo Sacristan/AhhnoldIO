@@ -2,7 +2,7 @@
 Simple Safe Performant Minimalistic SaveFile API for Unity
 
 # How it works
-* Packer packs / unpacks data to/from a binary file
+* Packer packs / unpacks data to/from a binary OR JSON file
 * Saved data is hashed and hash info added to file
 * When loading file its possible to check whether data hash matches the one saved - to avoid edited save files (fe using any hex editor)
 * SaveFile versions packed / unpacked automatically
