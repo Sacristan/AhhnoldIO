@@ -24,6 +24,7 @@ Simple Safe Performant Minimalistic SaveFile API for Unity
 * Gorytale: `https://store.steampowered.com/app/973850/Gorytale/`
 * MineClone: `https://www.crazygames.com/game/mine-clone`
 * Shave & Stuff: `https://www.meta.com/experiences/7532973430077887/`
+* Pets & Stuff: `https://www.meta.com/experiences/7818625474831202/`
 * Zombie Cleanup Service: `https://www.meta.com/experiences/4571033812974975/`
 
 # Collaboration?
