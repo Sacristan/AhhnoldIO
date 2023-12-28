@@ -44,11 +44,8 @@ namespace Sacristan.Ahhnold.IO.Binary
                     using (BinaryWriter writer = new BinaryWriter(stream, Encoding))
                     {
                         writer.Write(Version);
-
-                        string data = string.Empty;
                         yield return PackDataAsync(writer);
-                        writer.Write(GetHash(unpacker.ToString()));
-
+                        writer.Write(GetHash(packer.ToString()));
                         packer.Clear();
                     }
                 }
