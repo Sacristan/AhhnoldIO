@@ -43,7 +43,17 @@ namespace Sacristan.Ahhnold.IO.Serialized
                     default:
                         throw new System.NotImplementedException();
                 }
+            }
 
+            public virtual void WriteRawData(string data)
+            {
+                System.IO.File.WriteAllText(SaveFilePath, data);
+                BuildHashFile(data);
+            }
+
+            public virtual string ReadRawData()
+            {
+                return System.IO.File.ReadAllText(SaveFilePath);
             }
 
             public override void Delete()
@@ -73,13 +83,12 @@ namespace Sacristan.Ahhnold.IO.Serialized
             private void SerializeJSON(object data)
             {
                 string json = JsonUtility.ToJson(data);
-                File.WriteAllText(SaveFilePath, json);
-                BuildHashFile(json);
+                WriteRawData(json);
             }
 
             private T DeserializeJSON<T>()
             {
-                string json = System.IO.File.ReadAllText(SaveFilePath);
+                string json = ReadRawData();
                 return JsonUtility.FromJson<T>(json);
             }
 
