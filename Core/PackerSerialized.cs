@@ -53,7 +53,7 @@ namespace Sacristan.Ahhnold.IO.Serialized
 
             public virtual string ReadRawData()
             {
-                return System.IO.File.ReadAllText(SaveFilePath);
+                return HasSaveFile ? System.IO.File.ReadAllText(SaveFilePath) : string.Empty;
             }
 
             public override void Delete()
@@ -64,7 +64,7 @@ namespace Sacristan.Ahhnold.IO.Serialized
 
             public bool IsHashValid()
             {
-                if (!HasHashFile) return false;
+                if (!HasHashFile || !HasSaveFile) return false;
                 string data;
 
                 switch (SaveFileSerializationType)

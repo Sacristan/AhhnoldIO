@@ -13,12 +13,12 @@ namespace Sacristan.Ahhnold.IO
             protected virtual string Extension => ".dat";
             protected virtual string Salt => "17t5j010Z611KIx";
             protected string FileNameWithExtension => FileName + Extension;
-            public bool HasSaveFile => File.Exists(GetDataPath(FileNameWithExtension));
+            public bool HasSaveFile => File.Exists(SaveFilePath);
             public string SaveFilePath => GetDataPath(FileNameWithExtension);
 
             public virtual void Delete()
             {
-                string path = GetDataPath(FileNameWithExtension);
+                string path = SaveFilePath;
                 if (HasSaveFile) File.Delete(path);
             }
 
