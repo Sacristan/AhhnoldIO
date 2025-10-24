@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 
@@ -47,8 +48,16 @@ namespace Sacristan.Ahhnold.IO.Serialized
 
             public virtual void WriteRawData(string data)
             {
-                System.IO.File.WriteAllText(SaveFilePath, data);
-                BuildHashFile(data);
+                try
+                {
+
+                    System.IO.File.WriteAllText(SaveFilePath, data);
+                    BuildHashFile(data);
+                }
+                catch (IOException e)
+                {
+                    Debug.LogError($"Ahhnold.IO.Serialized {nameof(WriteRawData)} got IO Exception {e.Message}");
+                }
             }
 
             public virtual string ReadRawData()
