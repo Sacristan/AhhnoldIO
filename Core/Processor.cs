@@ -31,3 +31,17 @@ namespace Sacristan.Ahhnold.IO.Serialized
         }
     }
 }
+
+namespace Sacristan.Ahhnold.IO.PlayerPrefs
+{
+    public static partial class SaveFile
+    {
+        public abstract class Processor
+        {
+            public virtual Packer SaveFilePacker => null;
+            public void Save(object data) => SaveFilePacker?.Save(data);
+            public T Load<T>() => SaveFilePacker.Load<T>();
+            public bool IsHashValid() => SaveFilePacker.IsHashValid();
+        }
+    }
+}
