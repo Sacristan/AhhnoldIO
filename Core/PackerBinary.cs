@@ -25,6 +25,26 @@ namespace Sacristan.Ahhnold.IO.Binary
 
             public virtual void Save()
             {
+                if (UseBackgroundSave)
+                {
+                    packer.Clear();
+
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        using (BinaryWriter writer = new BinaryWriter(stream, Encoding))
+                        {
+                            writer.Write(Version);
+                            PackData(writer);
+                            writer.Write(GetHash(packer.ToString()));
+                            packer.Clear();
+                            writer.Flush();
+                            QueueFileWrite(stream.ToArray());
+                        }
+                    }
+
+                    return;
+                }
+
                 packer.Clear();
                 bool written = false;
 
@@ -57,6 +77,26 @@ namespace Sacristan.Ahhnold.IO.Binary
 
             public virtual IEnumerator SaveAsync()
             {
+                if (UseBackgroundSave)
+                {
+                    packer.Clear();
+
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        using (BinaryWriter writer = new BinaryWriter(stream, Encoding))
+                        {
+                            writer.Write(Version);
+                            yield return PackDataAsync(writer);
+                            writer.Write(GetHash(packer.ToString()));
+                            packer.Clear();
+                            writer.Flush();
+                            QueueFileWrite(stream.ToArray());
+                        }
+                    }
+
+                    yield break;
+                }
+
                 packer.Clear();
                 bool written = false;
 
@@ -87,8 +127,21 @@ namespace Sacristan.Ahhnold.IO.Binary
                 CommitTempFile(SaveFilePath);
             }
 
+            private void QueueFileWrite(byte[] bytes)
+            {
+                string path = SaveFilePath;
+                bool flushToDisk = FlushToDisk;
+
+                QueueWrite(() =>
+                {
+                    WriteTempFile(path, bytes, flushToDisk);
+                    CommitTempFile(path);
+                });
+            }
+
             public virtual void Load()
             {
+                WaitForPendingSave();
                 if (!HasSaveFile) return;
 
                 try
@@ -109,6 +162,7 @@ namespace Sacristan.Ahhnold.IO.Binary
 
             public virtual IEnumerator LoadAsync()
             {
+                WaitForPendingSave();
                 if (!HasSaveFile) yield break;
 
                 using (FileStream stream = File.Open(SaveFilePath, FileMode.Open))

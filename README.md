@@ -7,6 +7,9 @@ Simple Safe Performant Minimalistic SaveFile API for Unity
 * When loading file its possible to check whether data hash matches the one saved - to avoid edited save files (fe using any hex editor)
 * SaveFile versions packed / unpacked automatically
 * Smaller save file sizes
+* Crash-safe: saves are written to a temp file and swapped in, so a crash, kill or full disk never leaves a broken save
+* Optional background saving (`SaveInBackground`) for games that save often: only the newest of rapid saves is written, off the main thread (inline on WebGL). Call `PackerBase.WaitForAllPendingSaves()` on pause
+* Optional `FlushToDisk = false` skips waiting for storage (still safe against app kills, not power loss)
 
 # How to add to Your project
 * Open Unity package manager

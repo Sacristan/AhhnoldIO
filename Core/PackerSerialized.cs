@@ -34,6 +34,7 @@ namespace Sacristan.Ahhnold.IO.Serialized
 
             public virtual T Load<T>()
             {
+                WaitForPendingSave();
                 if (!HasSaveFile) return default(T);
 
                 switch (SaveFileSerializationType)
@@ -47,6 +48,15 @@ namespace Sacristan.Ahhnold.IO.Serialized
 
             public virtual void WriteRawData(string data)
             {
+                string dataPath = SaveFilePath;
+                string hashPath = HashFilePath;
+                bool flushToDisk = FlushToDisk;
+
+                QueueWrite(() => WriteFiles(dataPath, hashPath, data, flushToDisk));
+            }
+
+            private void WriteFiles(string dataPath, string hashPath, string data, bool flushToDisk)
+            {
                 try
                 {
                     // Both files are fully written to temps first, then swapped in, so a crash or power loss
@@ -54,17 +64,17 @@ namespace Sacristan.Ahhnold.IO.Serialized
                     // old hash - IsHashValid() recovers that from the leftover hash temp.
                     try
                     {
-                        WriteTempFile(SaveFilePath, data);
-                        WriteTempFile(HashFilePath, GetHash(data));
+                        WriteTempFile(dataPath, data, flushToDisk);
+                        WriteTempFile(hashPath, GetHash(data), flushToDisk);
                     }
                     catch
                     {
-                        TryDeleteTempFile(SaveFilePath);
+                        TryDeleteTempFile(dataPath);
                         throw;
                     }
 
-                    CommitTempFile(SaveFilePath);
-                    CommitTempFile(HashFilePath);
+                    CommitTempFile(dataPath);
+                    CommitTempFile(hashPath);
                 }
                 catch (IOException e)
                 {
@@ -74,6 +84,7 @@ namespace Sacristan.Ahhnold.IO.Serialized
 
             public virtual string ReadRawData()
             {
+                WaitForPendingSave();
                 return HasSaveFile ? System.IO.File.ReadAllText(SaveFilePath) : string.Empty;
             }
 
@@ -86,6 +97,7 @@ namespace Sacristan.Ahhnold.IO.Serialized
 
             public bool IsHashValid()
             {
+                WaitForPendingSave();
                 if (!HasHashFile || !HasSaveFile) return false;
                 string data;
 
