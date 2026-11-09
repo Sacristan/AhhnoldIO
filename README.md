@@ -25,6 +25,8 @@ Simple Safe Performant Minimalistic SaveFile API for Unity
 * MineClone: `https://www.crazygames.com/game/mine-clone`
 * Shave & Stuff: `https://www.meta.com/experiences/7532973430077887/`
 * Pets & Stuff: `https://www.meta.com/experiences/7818625474831202/`
+* Shop & Stuff: `https://www.meta.com/experiences/shop-stuff-supermarket-simulator/9451560181622000`
+* Bad Inmate: `https://www.meta.com/experiences/bad-inmate/26465987139723490/`
 * Zombie Cleanup Service: `https://www.meta.com/experiences/4571033812974975/`
 
 # Collaboration?
