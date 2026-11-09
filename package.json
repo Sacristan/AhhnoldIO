@@ -1,6 +1,6 @@
 {
     "name": "com.sacristan.ahhnold.io",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "displayName": "Ahhnold IO",
     "description": "Simple Safe Performant Minimalistic SaveFile API for Unity",
     "unity": "2018.1",

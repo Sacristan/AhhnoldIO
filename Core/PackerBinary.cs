@@ -25,30 +25,66 @@ namespace Sacristan.Ahhnold.IO.Binary
 
             public virtual void Save()
             {
-                using (FileStream stream = File.Create(SaveFilePath))
+                packer.Clear();
+                bool written = false;
+
+                // try/finally rather than catch, as SaveAsync yields inside it; the finally also runs when its
+                // coroutine is stopped mid-save.
+                try
                 {
-                    using (BinaryWriter writer = new BinaryWriter(stream, Encoding))
+                    using (FileStream stream = CreateTempFile(SaveFilePath))
                     {
-                        writer.Write(Version);
-                        PackData(writer);
-                        writer.Write(GetHash(packer.ToString()));
-                        packer.Clear();
+                        using (BinaryWriter writer = new BinaryWriter(stream, Encoding))
+                        {
+                            writer.Write(Version);
+                            PackData(writer);
+                            writer.Write(GetHash(packer.ToString()));
+                            packer.Clear();
+                            writer.Flush();
+                            stream.Flush(FlushToDisk);
+                        }
                     }
+
+                    written = true;
                 }
+                finally
+                {
+                    if (!written) TryDeleteTempFile(SaveFilePath);
+                }
+
+                CommitTempFile(SaveFilePath);
             }
 
             public virtual IEnumerator SaveAsync()
             {
-                using (FileStream stream = File.Create(SaveFilePath))
+                packer.Clear();
+                bool written = false;
+
+                // try/finally rather than catch, as SaveAsync yields inside it; the finally also runs when its
+                // coroutine is stopped mid-save.
+                try
                 {
-                    using (BinaryWriter writer = new BinaryWriter(stream, Encoding))
+                    using (FileStream stream = CreateTempFile(SaveFilePath))
                     {
-                        writer.Write(Version);
-                        yield return PackDataAsync(writer);
-                        writer.Write(GetHash(packer.ToString()));
-                        packer.Clear();
+                        using (BinaryWriter writer = new BinaryWriter(stream, Encoding))
+                        {
+                            writer.Write(Version);
+                            yield return PackDataAsync(writer);
+                            writer.Write(GetHash(packer.ToString()));
+                            packer.Clear();
+                            writer.Flush();
+                            stream.Flush(FlushToDisk);
+                        }
                     }
+
+                    written = true;
                 }
+                finally
+                {
+                    if (!written) TryDeleteTempFile(SaveFilePath);
+                }
+
+                CommitTempFile(SaveFilePath);
             }
 
             public virtual void Load()

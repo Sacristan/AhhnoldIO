@@ -49,9 +49,22 @@ namespace Sacristan.Ahhnold.IO.Serialized
             {
                 try
                 {
+                    // Both files are fully written to temps first, then swapped in, so a crash or power loss
+                    // never leaves a truncated save. A crash between the two swaps leaves the new data with the
+                    // old hash - IsHashValid() recovers that from the leftover hash temp.
+                    try
+                    {
+                        WriteTempFile(SaveFilePath, data);
+                        WriteTempFile(HashFilePath, GetHash(data));
+                    }
+                    catch
+                    {
+                        TryDeleteTempFile(SaveFilePath);
+                        throw;
+                    }
 
-                    System.IO.File.WriteAllText(SaveFilePath, data);
-                    BuildHashFile(data);
+                    CommitTempFile(SaveFilePath);
+                    CommitTempFile(HashFilePath);
                 }
                 catch (IOException e)
                 {
@@ -68,6 +81,7 @@ namespace Sacristan.Ahhnold.IO.Serialized
             {
                 base.Delete();
                 if (HasHashFile) File.Delete(HashFilePath);
+                DeleteTempFile(HashFilePath);
             }
 
             public bool IsHashValid()
@@ -85,7 +99,16 @@ namespace Sacristan.Ahhnold.IO.Serialized
                 }
 
                 string hash = File.ReadAllText(HashFilePath);
-                return IsHashValid(data: data, hash: hash);
+                if (IsHashValid(data: data, hash: hash)) return true;
+
+                // Interrupted between swapping in the data and its hash: finish the save.
+                string pendingHashPath = GetTempFilePath(HashFilePath);
+                if (!File.Exists(pendingHashPath)) return false;
+                if (!IsHashValid(data: data, hash: File.ReadAllText(pendingHashPath))) return false;
+
+                try { CommitTempFile(HashFilePath); }
+                catch (IOException e) { Debug.LogWarning($"Ahhnold.IO.Serialized {nameof(IsHashValid)} couldn't finish interrupted save: {e.Message}"); }
+                return true;
             }
 
             private void SerializeJSON(object data)
@@ -98,11 +121,6 @@ namespace Sacristan.Ahhnold.IO.Serialized
             {
                 string json = ReadRawData();
                 return JsonUtility.FromJson<T>(json);
-            }
-
-            private void BuildHashFile(string data)
-            {
-                System.IO.File.WriteAllText(HashFilePath, GetHash(data));
             }
         }
     }
